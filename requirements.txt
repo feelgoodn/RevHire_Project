@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+sqlalchemy
+sqlalchemy-utils
+passlib[bcrypt]
+python-jose[cryptography]
+python-multipart
