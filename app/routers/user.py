@@ -13,8 +13,7 @@ router = APIRouter(
     tags=['User']
 )
 
-
-@router.post("/generate_token", response_model=Token)
+@router.post("/login", response_model=Token)
 async def login_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
@@ -34,9 +33,8 @@ async def login_access_token(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-
 @router.get("/user", response_model=ShowUser)
-async def get_users(current_user: User = Depends(user_services.get_current_active_user)):
+async def get_users(current_user: User = Depends(user_services.get_current_user)):
     return current_user
 
 @router.post("/signup/{role}/", response_model=User)
@@ -53,10 +51,10 @@ async def register_user(
         db, user_data.username, user_data.email, user_data.password, user_data.phone_number, role
     )
 
-@router.put("/update", response_model=ShowUser)
+@router.put("/update", response_model=User)
 async def update_user_me(
     user_data: UserCreate,
-    current_user: User = Depends(user_services.get_current_active_user),
+    current_user: User = Depends(user_services.get_current_user),
     db: Session = Depends(get_db)
 ):
     user = user_services.get_user_by_username(db, current_user.username)
@@ -65,20 +63,11 @@ async def update_user_me(
 
     user.username = user_data.username
     user.email = user_data.email
-    user.hashed_password = user_data.password
+    user.hashed_password = user_services.get_password_hash(user_data.password)
     user.phone_number = user_data.phone_number
     db.commit()
     db.refresh(user)
     return user
 
-@router.delete("/delete/{user_id}", response_model=ShowUser)
-async def delete_user(user_id: int, db: Session = Depends(get_db)):
-    user = user_services.get_user_by_id(user_id, db)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    deleted_user = user_services.delete_user(db, user_id)
-    if not deleted_user:
-        raise HTTPException(status_code=400, detail="Failed to delete user")
-    return {"message": "User deleted successfully"}            
+          
     

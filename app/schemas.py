@@ -3,7 +3,6 @@ from enum import Enum
 from .models import UserRoleEnum
 
 
-
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -39,7 +38,6 @@ class Job(BaseModel):
     description : str
     location : str
     experience : str
-    skills : str
 
 class View_JobPost(BaseModel):
     title: str
@@ -58,15 +56,15 @@ class JobPostCreate(BaseModel):
 
 
 class ApplicationCreate(BaseModel):
-    job_title: str
     username: str
     email: EmailStr
+    skills: str
     resume_link: str
     cover_letter: str
 
 class Applicationshow(BaseModel):
     applicant_id: int
-    job_title: str
+    title: str
     username: str
     email: str
     resume_link: str

@@ -12,8 +12,6 @@ class UserRoleEnum(str, Enum):
         return str(self.value)
 
 
-
-
 class User(Base):
     __tablename__ = "users"  
     id = Column(Integer, primary_key=True, index=True)
@@ -34,19 +32,18 @@ class Job(Base):
     location = Column(String)
     salary = Column(Integer)
     experience = Column(String)
-    skills = Column(String)
     user_id = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="jobs")
-
 
 
 class Application(Base):
     __tablename__ = "application"
     id = Column(Integer, primary_key=True, index=True)
     applicant_id = Column(Integer, ForeignKey("users.id"))
-    job_title = Column(String)
     username = Column(String)
     email= Column(String) 
+    skills = Column(String)
     resume_link = Column(String)
     cover_letter = Column(String)
     applicant = relationship("User", back_populates="applications")
+

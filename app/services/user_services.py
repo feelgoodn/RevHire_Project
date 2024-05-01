@@ -6,7 +6,6 @@ from ..auth import get_current_user
 from typing import Annotated
 
 
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
@@ -29,7 +28,6 @@ def create_user(db, username: str, email: str, password: str, phone_number: int,
     db.commit()
     db.refresh(db_user)
     return db_user
-
 
 
 def get_user_by_username(db, username: str):

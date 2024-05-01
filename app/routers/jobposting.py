@@ -5,6 +5,7 @@ from app.database import get_db
 from ..models import Job
 from ..schemas import JobPostCreate, User, UserRoleEnum, View_JobPost
 from ..services import user_services
+from ..auth import get_current_user
 
 
 router = APIRouter(
@@ -15,7 +16,7 @@ router = APIRouter(
 async def create_job_post(
     job_post_create: JobPostCreate,
     token: str = Header(...),
-    current_user: User = Depends(user_services.get_current_active_user),
+    current_user: User = Depends(user_services.get_current_user),
     db: Session = Depends(get_db),
 ):
     try:
@@ -26,13 +27,13 @@ async def create_job_post(
         db.refresh(job_post)
         return {"message": "Job post created successfully"}
     except Exception:
-        error_message = "Failed to create job post due to an internal server error."
+        error_message = "Failed to create job post."
         raise HTTPException(status_code=500, detail=error_message)
 
 @router.get("/view_jobposts", response_model=List[View_JobPost])
 async def get_job_postings(
     token: str = Header(...),
-    current_user: User = Depends(user_services.get_current_active_user),
+    current_user: User = Depends(user_services.get_current_user),
     db: Session = Depends(get_db)
 ):
     try:
@@ -40,7 +41,7 @@ async def get_job_postings(
         job_posts = db.query(Job).filter(Job.user_id == current_user.id).all()
         return job_posts
     except Exception:
-        error_message = "Failed to retrieve job posts due to an internal server error."
+        error_message = "Failed to retrieve job posts."
         raise HTTPException(status_code=500, detail=error_message)
 
 @router.put("/update_post")
@@ -48,7 +49,7 @@ async def update_job_post(
     job_post_id: int,
     job_post_create: JobPostCreate,
     token: str = Header(...),
-    current_user: User = Depends(user_services.get_current_active_user),
+    current_user: User = Depends(user_services.get_current_user),
     db: Session = Depends(get_db),
 ):
     try:
@@ -71,7 +72,7 @@ async def update_job_post(
 async def delete_job_post(
     job_post_id: int,
     token: str = Header(...),
-    current_user: User = Depends(user_services.get_current_active_user),
+    current_user: User = Depends(user_services.get_current_user),
     db: Session = Depends(get_db),
 ):
     try:
@@ -90,7 +91,6 @@ async def delete_job_post(
 
 
     
-
     
 
 

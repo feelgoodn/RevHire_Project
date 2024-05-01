@@ -13,7 +13,7 @@ router = APIRouter(
 
 
 @router.get("/View_application", response_model=list[Applicationshow])
-async def apply_for_job(
+async def get_job_applications(
     token: str = Header(...),  
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -27,7 +27,6 @@ async def apply_for_job(
         raise HTTPException(status_code=500, detail=error_message)
     
 
-
 @router.post("/post_application")
 async def create_job_application(
     job_application_create: ApplicationCreate,  
@@ -36,7 +35,6 @@ async def create_job_application(
     db: Session = Depends(get_db),
 ):
     try:
-        print("Entering try block")
         current_user = await user_services.get_current_active_user(current_user, UserRoleEnum.Jobseeker)
         job_application = Application(**job_application_create.dict(), applicant_id=current_user.id)
 
@@ -44,16 +42,14 @@ async def create_job_application(
         db.commit()
         db.refresh(job_application)
 
-        return {"message": "Job application created successfully"}
-    except Exception as e:
-        print(f"Error creating job application: {e}")
+        return {"message": "Job application posted successfully"}
+    except Exception:
         error_message = "Failed to post job application."
         raise HTTPException(status_code=500, detail=error_message)
     
 
-
 @router.put("/update_application")
-async def update_job_application(
+async def update_job_application(   
     job_id: int,
     job_application_create: ApplicationCreate,
     token: str = Header(...),  
@@ -77,8 +73,6 @@ async def update_job_application(
         raise HTTPException(status_code=500, detail=error_message)
 
 
-
-    
 @router.delete("/delete_application")
 async def delete_job_application(
     job_id: int,
