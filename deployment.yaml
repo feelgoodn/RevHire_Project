@@ -2,10 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: revhire-deployment
-  labels:
-    app: revhire-app
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: revhire-app
@@ -15,8 +13,7 @@ spec:
         app: revhire-app
     spec:
       containers:
-        - name: revhire-app
-          image: nikhilkothale17/revhire_pro
-          ports:
-            - containerPort: 8000
-
+      - name: rev-hire-container
+        image: nikhilkothale17/revhire_pro:latest
+        ports:
+        - containerPort: 8000
